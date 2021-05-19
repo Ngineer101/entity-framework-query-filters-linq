@@ -15,6 +15,8 @@ namespace NWBlog.EntityFrameworkDemo.Api.Data
             _userIsAdmin = userIsAdmin;
         }
 
+        public DefaultContext(DbContextOptions<DefaultContext> options) : base(options) { }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // only messages sent by the currently signed in user will be retrieved from the database

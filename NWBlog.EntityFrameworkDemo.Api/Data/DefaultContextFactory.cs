@@ -1,13 +1,16 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
 namespace NWBlog.EntityFrameworkDemo.Api.Data
 {
-    public class DefaultContextFactory : IDefaultContextFactory
+    public class DefaultContextFactory : IDefaultContextFactory, IDesignTimeDbContextFactory<DefaultContext>
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
+
+        public DefaultContextFactory() { }
 
         public DefaultContextFactory(IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
         {
@@ -23,6 +26,15 @@ namespace NWBlog.EntityFrameworkDemo.Api.Data
                 .Options;
 
             return new DefaultContext(options, signedInUser?.Identity?.Name, signedInUser?.IsInRole("admin") ?? false);
+        }
+
+        public DefaultContext CreateDbContext(string[] args)
+        {
+            var options = new DbContextOptionsBuilder<DefaultContext>()
+                .UseSqlite("Data Source=demoDb.db")
+                .Options;
+
+            return new DefaultContext(options);
         }
     }
 }
