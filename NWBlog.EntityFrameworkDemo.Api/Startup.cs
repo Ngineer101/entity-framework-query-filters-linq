@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using NWBlog.EntityFrameworkDemo.Api.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +33,15 @@ namespace NWBlog.EntityFrameworkDemo.Api
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Entity Framework Demo", Version = "v1" });
+            });
+
+            // add the following code
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<IDefaultContextFactory, DefaultContextFactory>();
+            services.AddScoped(provider =>
+            {
+                var factory = provider.GetRequiredService<IDefaultContextFactory>();
+                return factory.CreateContext();
             });
         }
 
